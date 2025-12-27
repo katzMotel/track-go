@@ -1,10 +1,10 @@
 import { configureStore } from '@reduxjs/toolkit';
 import shipmentsReducer from './slices/shipmentsSlice';
-import mapReducer from '@/store/slices/mapSlice';
-import filtersReducer from '@/store/slices/filtersSlice';
-import uiReducer from '@/store/slices/uiSlice';
-import analyticsReducer from '@/store/slices/analyticsSlice';
-import notificationsReducer from '@/store/slices/notificationsSlice';
+import mapReducer from './slices/mapSlice';
+import filtersReducer from './slices/filtersSlice';
+import uiReducer from './slices/uiSlice';
+import analyticsReducer from './slices/analyticsSlice';
+import notificationsReducer from './slices/notificationsSlice';
 
 export const store = configureStore({
   reducer: {
@@ -18,12 +18,29 @@ export const store = configureStore({
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
       serializableCheck: {
-        // Ignore these action types for Date objects
-        ignoredActions: ['shipments/addShipment', 'shipments/updateShipment'],
-        // Ignore these field paths in all actions
-        ignoredActionPaths: ['payload.estimatedDelivery', 'payload.createdAt'],
+        // Ignore these action types
+        ignoredActions: [
+          'shipments/fetchShipments/fulfilled',
+          'shipments/addShipment',
+          'shipments/updateShipment',
+          'shipments/bulkUpdateShipments',
+          'notifications/addNotification',
+        ],
+        // Ignore these paths in all actions
+        ignoredActionPaths: [
+          'payload.estimatedDelivery',
+          'payload.actualDelivery',
+          'payload.createdAt',
+          'payload.updatedAt',
+          'payload.statusHistory',
+          'payload.timestamp',
+          'meta.arg',
+        ],
         // Ignore these paths in the state
-        ignoredPaths: ['shipments.shipments'],
+        ignoredPaths: [
+          'shipments.shipments',
+          'notifications.notifications',
+        ],
       },
     }),
 });
