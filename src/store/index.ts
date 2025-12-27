@@ -1,10 +1,10 @@
 import { configureStore } from '@reduxjs/toolkit';
 import shipmentsReducer from './slices/shipmentsSlice';
-import mapReducer from './slices/mapSlice';
-import filtersReducer from './slices/filtersSlice';
-import uiReducer from './slices/uiSlice';
-import analyticsReducer from './slices/analyticsSlice';
-import notificationsReducer from './slices/notificationsSlice';
+import mapReducer from '@/store/slices/mapSlice';
+import filtersReducer from '@/store/slices/filtersSlice';
+import uiReducer from '@/store/slices/uiSlice';
+import analyticsReducer from '@/store/slices/analyticsSlice';
+import notificationsReducer from '@/store/slices/notificationsSlice';
 
 export const store = configureStore({
   reducer: {
