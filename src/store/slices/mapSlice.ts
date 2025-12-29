@@ -41,20 +41,13 @@ interface MapState {
             state.center = action.payload.center;
             state.zoom = action.payload.zoom;
         },
-        setMapBounds: (state, action: PayloadAction<LatLngBounds>) => {
-            const bounds = action.payload;
-            state.bounds = {
-                _northEast: {
-                    lat: bounds.getNorthEast().lat,
-                    lng: bounds.getNorthEast().lng,
-                },
-                _southWest: {
-                    lat: bounds.getSouthWest().lat,
-                    lng: bounds.getSouthWest().lng,
-                },
-
-            };
-        },
+        setMapBounds: (state, action: PayloadAction<{
+            _northEast: { lat: number; lng: number };
+            _southWest: { lat: number; lng: number };
+          }>) => {
+            state.bounds = action.payload;
+          },
+          
         selectShipment: (state, action: PayloadAction<string | null>) =>{
             state.selectedShipmentId = action.payload;
         },
