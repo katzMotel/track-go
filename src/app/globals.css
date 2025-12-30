@@ -20,3 +20,25 @@ body {
   background: transparent !important;
   border: none !important;
 }
+
+
+/*. Smooth marker transitions */
+
+.leaflet-marker-icon{
+  transition: transform 5s linear !important;
+}
+
+/* Pulsing animation for out_for_delivery markers */
+
+@keyframes pulse{
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(249, 115, 22, 0.7);
+  }
+  50% {
+    box-shadow: 0 0 0 10px rgba(249, 115, 22, 0);
+  }
+}
+
+.marker_pulse {
+  animation: pulse 2s infinite;
+}

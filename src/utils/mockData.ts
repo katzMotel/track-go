@@ -300,3 +300,5 @@ export function generateNewShipment(
   
   return shipment;
 }
+
+export { US_CITIES};
