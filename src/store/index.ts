@@ -5,6 +5,8 @@ import filtersReducer from './slices/filtersSlice';
 import uiReducer from './slices/uiSlice';
 import analyticsReducer from './slices/analyticsSlice';
 import notificationsReducer from './slices/notificationsSlice';
+import { saveState, isLocalStorageAvailable } from '@/utils/localStorage';
+import { debounce } from '@/utils/debounce';
 
 export const store = configureStore({
   reducer: {
@@ -18,7 +20,6 @@ export const store = configureStore({
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
       serializableCheck: {
-        // Ignore these action types
         ignoredActions: [
           'shipments/fetchShipments/fulfilled',
           'shipments/addShipment',
@@ -26,7 +27,6 @@ export const store = configureStore({
           'shipments/bulkUpdateShipments',
           'notifications/addNotification',
         ],
-        // Ignore these paths in all actions
         ignoredActionPaths: [
           'payload.estimatedDelivery',
           'payload.actualDelivery',
@@ -36,7 +36,6 @@ export const store = configureStore({
           'payload.timestamp',
           'meta.arg',
         ],
-        // Ignore these paths in the state
         ignoredPaths: [
           'shipments.shipments',
           'notifications.notifications',
@@ -47,3 +46,14 @@ export const store = configureStore({
 
 export type RootState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;
+
+// Subscribe to store changes and save to localStorage (debounced)
+if (typeof window !== 'undefined' && isLocalStorageAvailable()) {
+  const debouncedSave = debounce(() => {
+    saveState(store.getState());
+  }, 1000);
+
+  store.subscribe(() => {
+    debouncedSave();
+  });
+}
