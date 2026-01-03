@@ -5,10 +5,11 @@ import dynamic from 'next/dynamic';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { fetchShipments } from '@/store/slices/shipmentsSlice';
 import { useShipmentUpdates } from '@/hooks/useShipmentUpdates';
+import { toggleRoutes } from '@/store/slices/mapSlice';
 import { useRestoreState } from '@/hooks/useRestoreState';
 import Sidebar from '@/components/Sidebar/Sidebar';
 import { isLocalStorageAvailable } from '@/utils/localStorage';
-
+import { Button } from '@/components/ui/Button';
 const ShipmentMap = dynamic(
   () => import('@/components/Map/ShipmentMap'),
   { 
@@ -25,6 +26,7 @@ export default function Home() {
   const dispatch = useAppDispatch();
   const { ids, loading, error } = useAppSelector(state => state.shipments);
   const sidebarOpen = useAppSelector(state => state.ui.sidebarOpen);
+  const showRoutes = useAppSelector(state => state.map.showRoutes);
   const activeShipments = useAppSelector(state => 
     state.shipments.ids.filter(id => {
       const shipment = state.shipments.shipments[id];
@@ -94,6 +96,16 @@ export default function Home() {
 
         <div className="flex-1 relative">
           <ShipmentMap />
+          <div className='absolute bottom-6 right-6 z-10 flex flex-col gap-2'>
+            <Button
+              onClick={()=> dispatch(toggleRoutes())}
+              variant={showRoutes ? 'primary' : 'secondary'}
+              size='sm'
+              className='shadow-lg'
+            >
+              {showRoutes? '🛣️ Hide Routes' : '🛣️ Show Routes'}
+            </Button>
+          </div>
         </div>
       </div>
     </div>

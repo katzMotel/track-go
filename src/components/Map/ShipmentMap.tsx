@@ -3,7 +3,9 @@ import { MapContainer, TileLayer } from "react-leaflet"
 import { MAP_CONFIG } from "@/lib/constants"
 import MapController from "./MapController"
 import ShipmentMarkers from "./ShipmentMarkers"
+import RouteLines from "./RouteLines";
 import 'leaflet/dist/leaflet.css';
+import { Route } from "lucide-react";
 
 export default function ShipmentMap() {
     return(
@@ -19,6 +21,7 @@ export default function ShipmentMap() {
                 url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
             />
             <MapController />
+            <RouteLines />
             <ShipmentMarkers />
         </MapContainer>
     )
