@@ -32,7 +32,15 @@ const US_CITIES: Array<Omit<Location, 'address'>> = [
 
 const SHIPMENT_STATUSES: ShipmentStatus[] = ['pending', 'in_transit', 'out_for_delivery', 'delivered', 'delayed'];
 const PRIORITIES: Priority[] = ['standard', 'express', 'overnight'];
+//validate balid cooridinates
 
+function ensureValidCoordinates(location: Location): Location{
+  return{
+    ...location,
+    lat: isNaN(location.lat) ? 39.8283 : location.lat, // Default to US center if invalid
+    lng: isNaN(location.lng) ? -98.5795 : location.lng,
+  };
+}
 // Generate a realistic tracking number
 function generateTrackingNumber(): string {
   const prefix = faker.helpers.arrayElement(['FDX', 'UPS', 'USPS', 'DHL']);
@@ -200,8 +208,8 @@ function generateShipment(): Shipment {
       US_CITIES.filter(city => city.city !== originCity.city)
     );
     
-    const origin = createLocation(originCity);
-    const destination = createLocation(destinationCity);
+    const origin = ensureValidCoordinates(createLocation(originCity));
+    const destination = ensureValidCoordinates(createLocation(destinationCity));
     
     // Calculate progress based on status
     let progress: number;
@@ -223,9 +231,9 @@ function generateShipment(): Shipment {
         break;
     }
     
-    const currentLocation = progress === 0 ? origin : 
+    const currentLocation = ensureValidCoordinates(progress === 0 ? origin : 
                             progress === 1 ? destination :
-                            calculateCurrentLocation(origin, destination, progress);
+                            calculateCurrentLocation(origin, destination, progress));
     
     const createdAt = faker.date.recent({ days: 7 });
     const estimatedDelivery = calculateETA(status, priority, createdAt);

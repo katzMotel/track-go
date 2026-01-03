@@ -1,121 +1,106 @@
-import { useCallback, useEffect, useState } from "react";
-import { useAppDispatch, useAppSelector } from "@/store/hooks";
-import { bulkUpdateShipments, updateShipment } from "@/store/slices/shipmentsSlice";
-import { addNotification } from "@/store/slices/notificationsSlice";
-import { calculateProgress, interpolatePosition, findNearestCity   } from "@/utils/routeCalculation";
-import { US_CITIES } from "@/utils/mockData";
-import type { Shipment, ShipmentStatus } from "@/types/shipment";
-import { MAP_CONFIG } from "@/lib/constants";
+import { useEffect, useCallback } from 'react';
+import { useAppDispatch, useAppSelector } from '@/store/hooks';
+import { bulkUpdateShipments } from '@/store/slices/shipmentsSlice';
+import { addNotification } from '@/store/slices/notificationsSlice';
+import { calculateProgress, interpolatePosition, findNearestCity } from '@/utils/routeCalculation';
+import { US_CITIES } from '@/utils/mockData';
+import { MAP_CONFIG } from '@/lib/constants';
+import { SHIPMENT_STATUSES } from '@/lib/constants';
+import type { Shipment } from '@/types/shipment';
 
-export function useShipmentUpdates(){
-    const dispatch = useAppDispatch();
-    const shipments = useAppSelector(state => state.shipments.shipments);
-    const ids = useAppSelector(state => state.shipments.ids);
+export function useShipmentUpdates() {
+  const dispatch = useAppDispatch();
+  const shipments = useAppSelector(state => state.shipments.shipments);
+  const ids = useAppSelector(state => state.shipments.ids);
 
-    const updateShipments = useCallback(() => {
-        const updates: Array<Partial<Shipment> & {id: string}> = [];
-        const notifications: Array<{id: string; status: ShipmentStatus; trackingNumber: string; destination: string}> = [];
+  const updateShipments = useCallback(() => {
+    const updates: Array<Partial<Shipment> & { id: string }> = [];
 
-        ids.forEach( id => {
-            const shipment = shipments[id];
-            if( shipment.status !== 'in_transit' && shipment.status !== 'out_for_delivery'){
-                return;
-            }
+    // Only update active shipments
+    const activeShipments = ids
+      .map(id => shipments[id])
+      .filter(s => s.status === 'in_transit' || s.status === 'out_for_delivery');
 
-            const progress = calculateProgress(
-                shipment.origin,
-                shipment.currentLocation,
-                shipment.destination
-            );
+    activeShipments.forEach(shipment => {
+      // Calculate current progress
+      const currentProgress = calculateProgress(
+        shipment.origin,
+        shipment.currentLocation,
+        shipment.destination
+      );
 
+      // Increment progress by 1% per update
+      const newProgress = Math.min(currentProgress + 0.01, 1);
 
-            const incrementPerUpdate = 0.01;
-            let newProgress = progress + incrementPerUpdate;
+      // Determine new status based on progress
+      let newStatus = shipment.status;
+      let shouldNotify = false;
 
-            let newStatus: ShipmentStatus = shipment.status;
+      if (newProgress >= 0.95 && shipment.status === 'in_transit') {
+        newStatus = 'out_for_delivery';
+        shouldNotify = true;
+      } else if (newProgress >= 1.0 && shipment.status === 'out_for_delivery') {
+        newStatus = 'delivered';
+        shouldNotify = true;
+      }
 
-            if(newProgress >= 0.95 && shipment.status === 'in_transit'){
-                newStatus = 'out_for_delivery';
-                notifications.push({
-                    id: shipment.id,
-                    status: 'out_for_delivery',
-                    trackingNumber: shipment.trackingNumber,
-                    destination: `${shipment.destination.city}, ${shipment.destination.state}`,
-                });
-            } else if(newProgress >= 1.0 && shipment.status === 'out_for_delivery'){
-                newStatus = 'delivered';
-                newProgress = 1.0;
-                notifications.push({
-                    id: shipment.id,
-                    status: 'delivered',
-                    trackingNumber: shipment.trackingNumber,
-                    destination: shipment.destination.address,
-                });
-            }
+      // Calculate new position
+      const newPosition = interpolatePosition(
+        shipment.origin,
+        shipment.destination,
+        newProgress
+      );
 
-            const newPosition = interpolatePosition(
-                shipment.origin,
-                shipment.destination,
-                newProgress
-            );
+      // Find nearest city for the new location
+      const nearestCity = findNearestCity(newPosition.lat, newPosition.lng, US_CITIES);
 
-            let locationDetails;
-            if(newStatus === 'delivered'){
-                locationDetails = {
-                    city: shipment.destination.city,
-                    state: shipment.destination.state,
-                    zip: shipment.destination.zip,
-                };
-            } else{
-                locationDetails = findNearestCity(newPosition.lat, newPosition.lng, US_CITIES);
+      // Create update object
+      const update: Partial<Shipment> & { id: string } = {
+        id: shipment.id,
+        currentLocation: {
+          lat: newPosition.lat,
+          lng: newPosition.lng,
+          address: shipment.currentLocation.address,
+          city: nearestCity.city,
+          state: nearestCity.state,
+          zip: nearestCity.zip,
+        },
+        status: newStatus,
+        updatedAt: new Date(),
+      };
 
-            }
+      // If delivered, set actual delivery time
+      if (newStatus === 'delivered' && shipment.status !== 'delivered') {
+        update.actualDelivery = new Date();
+      }
 
+      updates.push(update);
 
-            updates.push({
-                id: shipment.id,
-                currentLocation: {
-                    lat: newPosition.lat,
-                    lng: newPosition.lng,
-                    address: newStatus === 'delivered' ? shipment.destination.address : 'In transit',
-                    city: locationDetails.city,
-                    state: locationDetails.state,
-                    zip: locationDetails.zip,
-                },
-                status: newStatus,
-                ...(newStatus === 'delivered' &&{
-                    actualDelivery: new Date(),
-                }),
-            });
-        });
+      // Add notification for status change
+      if (shouldNotify) {
+        const statusLabel = SHIPMENT_STATUSES[newStatus].label;
+        dispatch(addNotification({
+          shipmentId: shipment.id,
+          type: newStatus,
+          title: `Shipment ${statusLabel}`,
+          message: `${shipment.trackingNumber} is now ${statusLabel.toLowerCase()}`,
+        }));
+      }
+    });
 
-        if(updates.length > 0){
-            dispatch(bulkUpdateShipments(updates));
-            console.log(`Updated ${updates.length} shipment(s)`);
-        }
+    // Bulk update all shipments at once
+    if (updates.length > 0) {
+      dispatch(bulkUpdateShipments(updates));
+      console.log(`Updated ${updates.length} shipment(s)`);
+    }
+  }, [dispatch, ids, shipments]);
 
-        notifications.forEach(notif => {
-            if(notif.status === 'out_for_delivery'){
-                dispatch(addNotification({
-                    type: 'out_for_delivery',
-                    shipmentId: notif.id,
-                    message: `Shipment ${notif.trackingNumber} is out for delivery to ${notif.destination}`,
-                }));
-            } else if(notif.status === 'delivered'){
-                dispatch(addNotification({
-                    type: 'delivered',
-                    shipmentId: notif.id,
-                    message: `Shipment ${notif.trackingNumber} has been delivered to ${notif.destination}`,
-                }));
-            }
-        });
-    }, [dispatch, ids, shipments]);
-    useEffect(() => {
-        const interval = setInterval(()=> {
-            updateShipments();
-        }, MAP_CONFIG.UPDATE_INTERVAL);
+  useEffect(() => {
+    // Run updates every 5 seconds
+    const interval = setInterval(() => {
+      updateShipments();
+    }, MAP_CONFIG.UPDATE_INTERVAL);
 
-        return () => clearInterval(interval);
-
-    }, [updateShipments]);
+    return () => clearInterval(interval);
+  }, [updateShipments]);
 }

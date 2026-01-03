@@ -1,28 +1,28 @@
 'use client';
-import { MapContainer, TileLayer } from "react-leaflet"
-import { MAP_CONFIG } from "@/lib/constants"
-import MapController from "./MapController"
-import ShipmentMarkers from "./ShipmentMarkers"
-import RouteLines from "./RouteLines";
+
+import { MapContainer, TileLayer } from 'react-leaflet';
+import { MAP_CONFIG } from '@/lib/constants';
+import MapController from './MapController';
+import ShipmentMarkers from './ShipmentMarkers';
+import RouteLines from './RouteLines';
 import 'leaflet/dist/leaflet.css';
-import { Route } from "lucide-react";
 
 export default function ShipmentMap() {
-    return(
-        <MapContainer
-            center={MAP_CONFIG.DEFAULT_CENTER}
-            zoom={MAP_CONFIG.DEFAULT_ZOOM}
-            style={{height: '100%', width: '100%'}}
-            zoomControl={true}
-            scrollWheelZoom={true}
-        >
-            <TileLayer
-                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-            />
-            <MapController />
-            <RouteLines />
-            <ShipmentMarkers />
-        </MapContainer>
-    )
+  return (
+    <MapContainer
+      center={MAP_CONFIG.DEFAULT_CENTER}
+      zoom={MAP_CONFIG.DEFAULT_ZOOM}
+      style={{ height: '100%', width: '100%' }}
+      zoomControl={false} // Disable default zoom control
+    >
+      <TileLayer
+        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+      />
+      
+      <MapController />
+      <RouteLines />
+      <ShipmentMarkers />
+    </MapContainer>
+  );
 }

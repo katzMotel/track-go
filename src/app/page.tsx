@@ -4,12 +4,14 @@ import { useEffect, useState } from 'react';
 import dynamic from 'next/dynamic';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { fetchShipments } from '@/store/slices/shipmentsSlice';
-import { useShipmentUpdates } from '@/hooks/useShipmentUpdates';
 import { toggleRoutes } from '@/store/slices/mapSlice';
+import { toggleSidebar } from '@/store/slices/uiSlice';
+import { useShipmentUpdates } from '@/hooks/useShipmentUpdates';
 import { useRestoreState } from '@/hooks/useRestoreState';
 import Sidebar from '@/components/Sidebar/Sidebar';
 import { isLocalStorageAvailable } from '@/utils/localStorage';
 import { Button } from '@/components/ui/Button';
+
 const ShipmentMap = dynamic(
   () => import('@/components/Map/ShipmentMap'),
   { 
@@ -27,6 +29,7 @@ export default function Home() {
   const { ids, loading, error } = useAppSelector(state => state.shipments);
   const sidebarOpen = useAppSelector(state => state.ui.sidebarOpen);
   const showRoutes = useAppSelector(state => state.map.showRoutes);
+  const unreadCount = useAppSelector(state => state.notifications.unreadCount);
   const activeShipments = useAppSelector(state => 
     state.shipments.ids.filter(id => {
       const shipment = state.shipments.shipments[id];
@@ -36,7 +39,6 @@ export default function Home() {
 
   const [storageAvailable, setStorageAvailable] = useState(false);
 
-  // Restore persisted state
   useRestoreState();
 
   useEffect(() => {
@@ -66,10 +68,13 @@ export default function Home() {
   }
 
   return (
-    <div className="h-screen w-screen flex">
+    <div className="h-screen w-screen flex relative">
+      {/* Sidebar */}
       {sidebarOpen && <Sidebar />}
 
-      <div className="flex-1 flex flex-col">
+      {/* Main Content */}
+      <div className="flex-1 flex flex-col relative">
+        {/* Header */}
         <div className="bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between">
           <div>
             <h1 className="text-2xl font-bold text-gray-900">Shipment Tracker</h1>
@@ -94,16 +99,37 @@ export default function Home() {
           </div>
         </div>
 
+        {/* Map */}
         <div className="flex-1 relative">
           <ShipmentMap />
-          <div className='absolute bottom-6 right-6 z-10 flex flex-col gap-2'>
+          
+          {/* Sidebar Toggle Button (when closed) */}
+          {!sidebarOpen && (
+            <div className="absolute top-4 left-4 z-[1000]">
+              <Button 
+                onClick={() => dispatch(toggleSidebar())} 
+                variant="primary"
+                className="shadow-lg"
+              >
+                ☰ Show Sidebar
+                {unreadCount > 0 && (
+                  <span className="ml-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                    {unreadCount}
+                  </span>
+                )}
+              </Button>
+            </div>
+          )}
+          
+          {/* Map Controls */}
+          <div className="absolute bottom-6 right-6 z-[1000] flex flex-col gap-2">
             <Button
-              onClick={()=> dispatch(toggleRoutes())}
+              onClick={() => dispatch(toggleRoutes())}
               variant={showRoutes ? 'primary' : 'secondary'}
-              size='sm'
-              className='shadow-lg'
+              size="sm"
+              className="shadow-lg"
             >
-              {showRoutes? '🛣️ Hide Routes' : '🛣️ Show Routes'}
+              {showRoutes ? '🛣️ Hide Routes' : '🛣️ Show Routes'}
             </Button>
           </div>
         </div>
