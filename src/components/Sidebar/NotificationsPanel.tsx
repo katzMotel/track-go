@@ -80,22 +80,22 @@ export default function NotificationsPanel() {
 
   if (notifications.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center h-full text-gray-500 p-8">
-        <svg className="w-16 h-16 mb-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <div className="flex flex-col items-center justify-center h-full text-gray-500 dark:text-gray-400 p-8 bg-white dark:bg-gray-800">
+        <svg className="w-16 h-16 mb-4 text-gray-300 dark:text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
         </svg>
         <p className="text-sm text-center font-medium">No notifications</p>
-        <p className="text-xs text-gray-400 mt-1">You're all caught up!</p>
+        <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">You're all caught up!</p>
       </div>
     );
   }
 
   return (
-    <div className="h-full flex flex-col">
+    <div className="h-full flex flex-col bg-white dark:bg-gray-800">
       {/* Header */}
-      <div className="p-4 border-b border-gray-200 flex items-center justify-between bg-gray-50">
+      <div className="p-4 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between bg-gray-50 dark:bg-gray-900/50">
         <div className="flex items-center gap-2">
-          <h3 className="font-semibold text-sm text-gray-900">Notifications</h3>
+          <h3 className="font-semibold text-sm text-gray-900 dark:text-gray-100">Notifications</h3>
           {unreadCount > 0 && (
             <Badge variant="primary" size="sm">
               {unreadCount} new
@@ -115,20 +115,20 @@ export default function NotificationsPanel() {
           <div
             key={notification.id}
             className={`
-              border-b border-gray-200 p-4 hover:bg-gray-50 transition-colors cursor-pointer
-              ${!notification.read ? 'bg-blue-50' : ''}
+              border-b border-gray-200 dark:border-gray-700 p-4 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors cursor-pointer
+              ${!notification.read ? 'bg-blue-50 dark:bg-blue-900/20' : 'bg-white dark:bg-gray-800'}
             `}
           >
             <div className="flex items-start justify-between mb-2">
               <div className="flex items-center gap-2 flex-1 min-w-0">
                 {!notification.read && (
-                  <div className="w-2 h-2 bg-blue-600 rounded-full flex-shrink-0" />
+                  <div className="w-2 h-2 bg-blue-600 dark:bg-blue-500 rounded-full flex-shrink-0" />
                 )}
                 <button
                   onClick={() => handleNotificationClick(notification.shipmentId)}
                   className="text-left flex-1 min-w-0"
                 >
-                  <p className="font-medium text-sm text-gray-900 truncate">
+                  <p className="font-medium text-sm text-gray-900 dark:text-gray-100 truncate">
                     {notification.title}
                   </p>
                 </button>
@@ -138,7 +138,7 @@ export default function NotificationsPanel() {
               <div className="flex items-center gap-1 ml-2">
                 <button
                   onClick={() => notification.read ? handleMarkAsUnread(notification.id) : handleMarkAsRead(notification.id)}
-                  className="p-1 text-gray-400 hover:text-gray-600"
+                  className="p-1 text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300"
                   title={notification.read ? 'Mark as unread' : 'Mark as read'}
                 >
                   {notification.read ? (
@@ -153,7 +153,7 @@ export default function NotificationsPanel() {
                 </button>
                 <button
                   onClick={() => handleDelete(notification.id)}
-                  className="p-1 text-gray-400 hover:text-red-600"
+                  className="p-1 text-gray-400 dark:text-gray-500 hover:text-red-600 dark:hover:text-red-400"
                   title="Delete"
                 >
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -167,13 +167,13 @@ export default function NotificationsPanel() {
               onClick={() => handleNotificationClick(notification.shipmentId)}
               className="text-left w-full"
             >
-              <p className="text-sm text-gray-600 mb-2">{notification.message}</p>
+              <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">{notification.message}</p>
               
               <div className="flex items-center justify-between">
                 <Badge variant={getStatusBadgeVariant(notification.type)} size="sm">
                   {SHIPMENT_STATUSES[notification.type as keyof typeof SHIPMENT_STATUSES]?.label || notification.type}
                 </Badge>
-                <span className="text-xs text-gray-500">
+                <span className="text-xs text-gray-500 dark:text-gray-500">
                   {formatTimestamp(notification.timestamp)}
                 </span>
               </div>

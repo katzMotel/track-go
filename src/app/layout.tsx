@@ -1,21 +1,10 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import { Providers } from "./providers";
-
-const geist = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
+import StoreProvider from '@/components/StoreProvider';
 
 export const metadata: Metadata = {
   title: "Shipment Tracker",
-  description: "Real-time shipment tracking and logistics management",
+  description: "Real-time shipment tracking with interactive map",
 };
 
 export default function RootLayout({
@@ -24,11 +13,28 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body
-        className={`${geist.variable} ${geistMono.variable} antialiased`}
-      >
-        <Providers>{children}</Providers>
+    <html lang="en" suppressHydrationWarning>
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              try {
+                const stored = localStorage.getItem('shipment-tracker-state');
+                if (stored) {
+                  const parsed = JSON.parse(stored);
+                  if (parsed.state?.ui?.theme === 'dark') {
+                    document.documentElement.classList.add('dark');
+                  }
+                }
+              } catch (e) {}
+            `,
+          }}
+        />
+      </head>
+      <body>
+        <StoreProvider>
+          {children}
+        </StoreProvider>
       </body>
     </html>
   );

@@ -54,32 +54,32 @@ export default function AnalyticsPanel() {
   ];
 
   return (
-    <div className="h-full overflow-y-auto p-4 space-y-6">
+    <div className="h-full overflow-y-auto p-4 space-y-6 bg-white dark:bg-gray-800">
       {/* Key Metrics */}
       <div>
-        <h3 className="font-semibold text-sm text-gray-900 mb-3">Key Metrics</h3>
+        <h3 className="font-semibold text-sm text-gray-900 dark:text-gray-100 mb-3">Key Metrics</h3>
         <div className="grid grid-cols-2 gap-3">
-          <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg p-4">
-            <p className="text-xs text-blue-700 font-medium">On-Time Rate</p>
-            <p className="text-2xl font-bold text-blue-900 mt-1">
+          <div className="bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/30 dark:to-blue-800/30 rounded-lg p-4">
+            <p className="text-xs text-blue-700 dark:text-blue-300 font-medium">On-Time Rate</p>
+            <p className="text-2xl font-bold text-blue-900 dark:text-blue-200 mt-1">
               {analytics.onTimeDeliveryRate.toFixed(1)}%
             </p>
           </div>
-          <div className="bg-gradient-to-br from-green-50 to-green-100 rounded-lg p-4">
-            <p className="text-xs text-green-700 font-medium">Avg Delivery</p>
-            <p className="text-2xl font-bold text-green-900 mt-1">
+          <div className="bg-gradient-to-br from-green-50 to-green-100 dark:from-green-900/30 dark:to-green-800/30 rounded-lg p-4">
+            <p className="text-xs text-green-700 dark:text-green-300 font-medium">Avg Delivery</p>
+            <p className="text-2xl font-bold text-green-900 dark:text-green-200 mt-1">
               {analytics.averageDeliveryTime.toFixed(1)}h
             </p>
           </div>
-          <div className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-lg p-4">
-            <p className="text-xs text-purple-700 font-medium">Total Revenue</p>
-            <p className="text-2xl font-bold text-purple-900 mt-1">
+          <div className="bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-900/30 dark:to-purple-800/30 rounded-lg p-4">
+            <p className="text-xs text-purple-700 dark:text-purple-300 font-medium">Total Revenue</p>
+            <p className="text-2xl font-bold text-purple-900 dark:text-purple-200 mt-1">
               ${(analytics.totalRevenue / 1000).toFixed(1)}k
             </p>
           </div>
-          <div className="bg-gradient-to-br from-orange-50 to-orange-100 rounded-lg p-4">
-            <p className="text-xs text-orange-700 font-medium">Active Now</p>
-            <p className="text-2xl font-bold text-orange-900 mt-1">
+          <div className="bg-gradient-to-br from-orange-50 to-orange-100 dark:from-orange-900/30 dark:to-orange-800/30 rounded-lg p-4">
+            <p className="text-xs text-orange-700 dark:text-orange-300 font-medium">Active Now</p>
+            <p className="text-2xl font-bold text-orange-900 dark:text-orange-200 mt-1">
               {(analytics.statusCounts.in_transit || 0) + (analytics.statusCounts.out_for_delivery || 0)}
             </p>
           </div>
@@ -88,8 +88,8 @@ export default function AnalyticsPanel() {
 
       {/* Status Distribution */}
       <div>
-        <h3 className="font-semibold text-sm text-gray-900 mb-3">Status Distribution</h3>
-        <div className="bg-gray-50 rounded-lg p-4">
+        <h3 className="font-semibold text-sm text-gray-900 dark:text-gray-100 mb-3">Status Distribution</h3>
+        <div className="bg-gray-50 dark:bg-gray-900/50 rounded-lg p-4">
           <ResponsiveContainer width="100%" height={200}>
             <PieChart>
               <Pie
@@ -110,7 +110,7 @@ export default function AnalyticsPanel() {
                   <Cell key={`cell-${index}`} fill={entry.color} />
                 ))}
               </Pie>
-              <Tooltip />
+              <Tooltip contentStyle={{ backgroundColor: 'rgba(0, 0, 0, 0.8)', border: 'none', borderRadius: '8px', color: '#fff' }} />
             </PieChart>
           </ResponsiveContainer>
         </div>
@@ -118,14 +118,14 @@ export default function AnalyticsPanel() {
 
       {/* Delivery Trend */}
       <div>
-        <h3 className="font-semibold text-sm text-gray-900 mb-3">7-Day Delivery Trend</h3>
-        <div className="bg-gray-50 rounded-lg p-4">
+        <h3 className="font-semibold text-sm text-gray-900 dark:text-gray-100 mb-3">7-Day Delivery Trend</h3>
+        <div className="bg-gray-50 dark:bg-gray-900/50 rounded-lg p-4">
           <ResponsiveContainer width="100%" height={220}>
             <LineChart data={trendData}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-              <XAxis dataKey="day" tick={{ fontSize: 12 }} />
-              <YAxis tick={{ fontSize: 12 }} />
-              <Tooltip />
+              <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" className="dark:stroke-gray-700" />
+              <XAxis dataKey="day" tick={{ fontSize: 12, fill: '#9ca3af' }} />
+              <YAxis tick={{ fontSize: 12, fill: '#9ca3af' }} />
+              <Tooltip contentStyle={{ backgroundColor: 'rgba(0, 0, 0, 0.8)', border: 'none', borderRadius: '8px', color: '#fff' }} />
               <Legend wrapperStyle={{ fontSize: '12px' }} />
               <Line type="monotone" dataKey="delivered" stroke="#10b981" strokeWidth={2} name="Delivered" />
               <Line type="monotone" dataKey="delayed" stroke="#ef4444" strokeWidth={2} name="Delayed" />
@@ -137,14 +137,14 @@ export default function AnalyticsPanel() {
 
       {/* Priority Breakdown */}
       <div>
-        <h3 className="font-semibold text-sm text-gray-900 mb-3">Shipments by Priority</h3>
-        <div className="bg-gray-50 rounded-lg p-4">
+        <h3 className="font-semibold text-sm text-gray-900 dark:text-gray-100 mb-3">Shipments by Priority</h3>
+        <div className="bg-gray-50 dark:bg-gray-900/50 rounded-lg p-4">
           <ResponsiveContainer width="100%" height={200}>
             <BarChart data={priorityData}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-              <XAxis dataKey="name" tick={{ fontSize: 12 }} />
-              <YAxis tick={{ fontSize: 12 }} />
-              <Tooltip />
+              <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" className="dark:stroke-gray-700" />
+              <XAxis dataKey="name" tick={{ fontSize: 12, fill: '#9ca3af' }} />
+              <YAxis tick={{ fontSize: 12, fill: '#9ca3af' }} />
+              <Tooltip contentStyle={{ backgroundColor: 'rgba(0, 0, 0, 0.8)', border: 'none', borderRadius: '8px', color: '#fff' }} />
               <Bar dataKey="count" fill="#667eea" />
             </BarChart>
           </ResponsiveContainer>
@@ -153,16 +153,17 @@ export default function AnalyticsPanel() {
 
       {/* Revenue by Priority */}
       <div>
-        <h3 className="font-semibold text-sm text-gray-900 mb-3">Revenue by Priority</h3>
-        <div className="bg-gray-50 rounded-lg p-4">
+        <h3 className="font-semibold text-sm text-gray-900 dark:text-gray-100 mb-3">Revenue by Priority</h3>
+        <div className="bg-gray-50 dark:bg-gray-900/50 rounded-lg p-4">
           <ResponsiveContainer width="100%" height={200}>
             <BarChart data={revenueData} layout="vertical">
-              <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-              <XAxis type="number" tick={{ fontSize: 12 }} />
-              <YAxis dataKey="name" type="category" tick={{ fontSize: 12 }} width={80} />
+              <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" className="dark:stroke-gray-700" />
+              <XAxis type="number" tick={{ fontSize: 12, fill: '#9ca3af' }} />
+              <YAxis dataKey="name" type="category" tick={{ fontSize: 12, fill: '#9ca3af' }} width={80} />
               <Tooltip 
-                    formatter={(value) => [`$${Number(value).toLocaleString()}`, 'Revenue']}
-                />
+                formatter={(value) => [`$${Number(value).toLocaleString()}`, 'Revenue']}
+                contentStyle={{ backgroundColor: 'rgba(0, 0, 0, 0.8)', border: 'none', borderRadius: '8px', color: '#fff' }}
+              />
               <Bar dataKey="revenue" fill="#10b981" />
             </BarChart>
           </ResponsiveContainer>
@@ -171,35 +172,35 @@ export default function AnalyticsPanel() {
 
       {/* Summary Stats */}
       <div>
-        <h3 className="font-semibold text-sm text-gray-900 mb-3">Summary Statistics</h3>
-        <div className="bg-gray-50 rounded-lg p-4 space-y-2 text-sm">
+        <h3 className="font-semibold text-sm text-gray-900 dark:text-gray-100 mb-3">Summary Statistics</h3>
+        <div className="bg-gray-50 dark:bg-gray-900/50 rounded-lg p-4 space-y-2 text-sm">
           <div className="flex justify-between">
-            <span className="text-gray-600">Total Shipments</span>
-            <span className="font-semibold text-gray-900">{shipments.length}</span>
+            <span className="text-gray-600 dark:text-gray-400">Total Shipments</span>
+            <span className="font-semibold text-gray-900 dark:text-gray-100">{shipments.length}</span>
           </div>
           <div className="flex justify-between">
-            <span className="text-gray-600">Delivered</span>
-            <span className="font-semibold text-green-600">{analytics.statusCounts.delivered || 0}</span>
+            <span className="text-gray-600 dark:text-gray-400">Delivered</span>
+            <span className="font-semibold text-green-600 dark:text-green-400">{analytics.statusCounts.delivered || 0}</span>
           </div>
           <div className="flex justify-between">
-            <span className="text-gray-600">In Transit</span>
-            <span className="font-semibold text-blue-600">{analytics.statusCounts.in_transit || 0}</span>
+            <span className="text-gray-600 dark:text-gray-400">In Transit</span>
+            <span className="font-semibold text-blue-600 dark:text-blue-400">{analytics.statusCounts.in_transit || 0}</span>
           </div>
           <div className="flex justify-between">
-            <span className="text-gray-600">Out for Delivery</span>
-            <span className="font-semibold text-orange-600">{analytics.statusCounts.out_for_delivery || 0}</span>
+            <span className="text-gray-600 dark:text-gray-400">Out for Delivery</span>
+            <span className="font-semibold text-orange-600 dark:text-orange-400">{analytics.statusCounts.out_for_delivery || 0}</span>
           </div>
           <div className="flex justify-between">
-            <span className="text-gray-600">Delayed</span>
-            <span className="font-semibold text-red-600">{analytics.statusCounts.delayed || 0}</span>
+            <span className="text-gray-600 dark:text-gray-400">Delayed</span>
+            <span className="font-semibold text-red-600 dark:text-red-400">{analytics.statusCounts.delayed || 0}</span>
           </div>
           <div className="flex justify-between">
-            <span className="text-gray-600">Pending</span>
-            <span className="font-semibold text-gray-600">{analytics.statusCounts.pending || 0}</span>
+            <span className="text-gray-600 dark:text-gray-400">Pending</span>
+            <span className="font-semibold text-gray-600 dark:text-gray-400">{analytics.statusCounts.pending || 0}</span>
           </div>
-          <div className="flex justify-between pt-2 border-t border-gray-200">
-            <span className="text-gray-600 font-medium">Avg Revenue/Shipment</span>
-            <span className="font-semibold text-gray-900">
+          <div className="flex justify-between pt-2 border-t border-gray-200 dark:border-gray-700">
+            <span className="text-gray-600 dark:text-gray-400 font-medium">Avg Revenue/Shipment</span>
+            <span className="font-semibold text-gray-900 dark:text-gray-100">
               ${shipments.length > 0 ? (analytics.totalRevenue / shipments.length).toFixed(2) : '0.00'}
             </span>
           </div>

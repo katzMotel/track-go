@@ -40,30 +40,19 @@ export default function Sidebar() {
   };
 
   if (!sidebarOpen) {
-    return (
-      <div className="absolute top-4 left-4 z-10">
-        <Button onClick={() => dispatch(toggleSidebar())} variant="primary">
-          ☰ Show Sidebar
-          {unreadCount > 0 && (
-            <span className="ml-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
-              {unreadCount}
-            </span>
-          )}
-        </Button>
-      </div>
-    );
+    return null;
   }
 
   return (
-    <div className="w-96 bg-white border-r border-gray-200 flex flex-col h-full">
+    <div className="w-96 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 flex flex-col h-full">
       {/* Header */}
-      <div className="border-b border-gray-200 p-4 flex items-center justify-between">
-        <h2 className="text-lg font-semibold text-gray-900">Shipment Tracker</h2>
+      <div className="border-b border-gray-200 dark:border-gray-700 p-4 flex items-center justify-between">
+        <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Shipment Tracker</h2>
         <div className="flex items-center gap-2">
           <div className="relative">
             <button
               onClick={() => setShowMenu(!showMenu)}
-              className="text-gray-400 hover:text-gray-600 p-1"
+              className="text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 p-1 transition-colors"
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" />
@@ -71,10 +60,10 @@ export default function Sidebar() {
             </button>
             
             {showMenu && (
-              <div className="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-20">
+              <div className="absolute right-0 mt-2 w-56 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 py-1 z-20">
                 <button
                   onClick={handleClearStorage}
-                  className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 flex items-center"
+                  className="w-full text-left px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 flex items-center transition-colors"
                 >
                   <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
@@ -86,7 +75,7 @@ export default function Sidebar() {
                     dispatch(clearFilters());
                     setShowMenu(false);
                   }}
-                  className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 flex items-center"
+                  className="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 flex items-center transition-colors"
                 >
                   <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
@@ -99,7 +88,7 @@ export default function Sidebar() {
 
           <button
             onClick={() => dispatch(toggleSidebar())}
-            className="text-gray-400 hover:text-gray-600 text-xl"
+            className="text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 text-xl transition-colors"
           >
             ✕
           </button>
@@ -107,7 +96,7 @@ export default function Sidebar() {
       </div>
 
       {/* Tabs */}
-      <div className="border-b border-gray-200 flex overflow-x-auto">
+      <div className="border-b border-gray-200 dark:border-gray-700 flex overflow-x-auto bg-white dark:bg-gray-800">
         {tabs.map(tab => (
           <button
             key={tab.id}
@@ -116,8 +105,8 @@ export default function Sidebar() {
             className={`
               flex-shrink-0 px-3 py-3 text-xs font-medium border-b-2 transition-colors relative
               ${sidebarPanel === tab.id 
-                ? 'border-blue-600 text-blue-600' 
-                : 'border-transparent text-gray-600 hover:text-gray-900 hover:border-gray-300'
+                ? 'border-blue-600 text-blue-600 dark:border-blue-500 dark:text-blue-400' 
+                : 'border-transparent text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 hover:border-gray-300 dark:hover:border-gray-600'
               }
               ${tab.disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}
             `}
@@ -128,7 +117,7 @@ export default function Sidebar() {
                 ml-1 px-1.5 py-0.5 rounded-full text-xs
                 ${tab.id === 'notifications' && tab.count > 0
                   ? 'bg-red-500 text-white'
-                  : 'bg-gray-100 text-gray-600'
+                  : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400'
                 }
               `}>
                 {tab.count}
@@ -139,7 +128,7 @@ export default function Sidebar() {
       </div>
 
       {/* Content */}
-      <div className="flex-1 overflow-hidden">
+      <div className="flex-1 overflow-hidden bg-white dark:bg-gray-800">
         {sidebarPanel === 'list' && <ShipmentList />}
         {sidebarPanel === 'filters' && <FilterPanel />}
         {sidebarPanel === 'analytics' && <AnalyticsPanel />}
