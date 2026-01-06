@@ -276,11 +276,6 @@ This is a portfolio project, but suggestions are welcome! Feel free to:
 
 ---
 
-## 📄 License
-
-MIT License - feel free to use this project for learning or portfolio purposes.
-
----
 
 ## 👨‍💻 Author
 
